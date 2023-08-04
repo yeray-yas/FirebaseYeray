@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "265819833806",
+    "project_id": "fir-yeray-2023",
+    "storage_bucket": "fir-yeray-2023.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:265819833806:android:5077034ae9f2556951979f",
+        "android_client_info": {
+          "package_name": "com.yerayyas.firebaseyeray"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "265819833806-41979bfk4kddvo99583554dvunfp9fub.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBc3UkU2Y706n82fahaelWgiQgAnp370o4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "265819833806-41979bfk4kddvo99583554dvunfp9fub.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
