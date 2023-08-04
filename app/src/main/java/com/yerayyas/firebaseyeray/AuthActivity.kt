@@ -7,8 +7,12 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.View
 import android.widget.Toast
+import com.google.android.gms.auth.api.signin.GoogleSignIn
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions
+import com.google.android.gms.common.api.ApiException
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.GoogleAuthProvider
 import com.yerayyas.firebaseyeray.databinding.ActivityAuthBinding
 
 class AuthActivity : AppCompatActivity() {
@@ -106,6 +110,15 @@ class AuthActivity : AppCompatActivity() {
             }
             googleButton.setOnClickListener {
 
+                val googleConf = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+                    .requestIdToken(getString(R.string.default_web_client_id))
+                    .requestEmail()
+                    .build()
+
+                val googleClient = GoogleSignIn.getClient(this@AuthActivity, googleConf)
+                googleClient.signOut()
+
+              startActivityForResult(googleClient.signInIntent, GOOGLE_SIGN_IN)
             }
         }
     }
@@ -134,5 +147,37 @@ class AuthActivity : AppCompatActivity() {
         builder.setPositiveButton("Aceptar", null)
         val dialog = builder.create()
         dialog.show()
+    }
+
+    @Deprecated("Deprecated in Java")
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (requestCode == GOOGLE_SIGN_IN) {
+            val task = GoogleSignIn.getSignedInAccountFromIntent(data)
+            try {
+                val account = task.getResult(ApiException::class.java)
+
+                if (account != null) {
+
+                    val credential = GoogleAuthProvider.getCredential(account.idToken, null)
+
+                    FirebaseAuth.getInstance().signInWithCredential(credential)
+                        .addOnCompleteListener {
+                            if (it.isSuccessful) {
+                                Toast.makeText(
+                                    this@AuthActivity,
+                                    "Usuario logueado en Google satisfactoriamente",
+                                    Toast.LENGTH_SHORT
+                                ).show()
+                                showHome(account.email ?: "", ProviderType.GOOGLE)
+                            } else {
+                                showLoginAlert()
+                            }
+                        }
+                }
+            } catch (e: ApiException) {
+                showLoginAlert()
+            }
+        }
     }
 }
