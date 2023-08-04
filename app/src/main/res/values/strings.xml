@@ -10,4 +10,7 @@
     <string name="email_text">Email text</string>
     <string name="provider_text">Provider text</string>
     <string name="log_out">Log out</string>
+    <string name="facebook_app_id">6107308719392044</string>
+    <string name="fb_login_protocol_scheme">fb6107308719392044</string>
+    <string name="facebook_client_token">daf534a80289f74ded4c077fddae158d</string>
 </resources>

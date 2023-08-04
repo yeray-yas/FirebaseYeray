@@ -3,7 +3,9 @@ package com.yerayyas.firebaseyeray
 import android.content.Context
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import com.facebook.login.LoginManager
 import com.google.firebase.auth.FirebaseAuth
+import com.yerayyas.firebaseyeray.ProviderType.FACEBOOK
 import com.yerayyas.firebaseyeray.databinding.ActivityHomeBinding
 
 
@@ -50,6 +52,10 @@ class HomeActivity : AppCompatActivity() {
                    .edit()
                prefs.clear()
                prefs.apply()
+
+               if (provider == FACEBOOK.name){
+                   LoginManager.getInstance().logOut()
+               }
 
                FirebaseAuth.getInstance().signOut()
                onBackPressed()

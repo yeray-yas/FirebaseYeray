@@ -7,10 +7,16 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.View
 import android.widget.Toast
+import com.facebook.CallbackManager
+import com.facebook.FacebookCallback
+import com.facebook.FacebookException
+import com.facebook.login.LoginManager
+import com.facebook.login.LoginResult
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.common.api.ApiException
 import com.google.firebase.analytics.FirebaseAnalytics
+import com.google.firebase.auth.FacebookAuthProvider
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.GoogleAuthProvider
 import com.yerayyas.firebaseyeray.databinding.ActivityAuthBinding
@@ -18,6 +24,7 @@ import com.yerayyas.firebaseyeray.databinding.ActivityAuthBinding
 class AuthActivity : AppCompatActivity() {
     private val GOOGLE_SIGN_IN = 100
     private lateinit var binding: ActivityAuthBinding
+    private val callbackManager = CallbackManager.Factory.create()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -120,6 +127,42 @@ class AuthActivity : AppCompatActivity() {
 
               startActivityForResult(googleClient.signInIntent, GOOGLE_SIGN_IN)
             }
+            facebookButton.setOnClickListener {
+                LoginManager.getInstance().logInWithReadPermissions(this@AuthActivity, listOf("email"))
+                LoginManager.getInstance().registerCallback(callbackManager, object: FacebookCallback<LoginResult>{
+                    override fun onCancel() {
+                       // TODO
+                    }
+
+                    override fun onError(error: FacebookException) {
+                        showLoginAlert()
+                    }
+
+                    override fun onSuccess(result: LoginResult) {
+                        result.let {
+                            val token = it.accessToken
+                            val credential = FacebookAuthProvider.getCredential(token.token)
+
+                            FirebaseAuth.getInstance().signInWithCredential(credential)
+                                .addOnCompleteListener {
+                                    if (it.isSuccessful) {
+                                        Toast.makeText(
+                                            this@AuthActivity,
+                                            "Usuario logueado en Google satisfactoriamente",
+                                            Toast.LENGTH_SHORT
+                                        ).show()
+                                        showHome(it.result.user?.email ?: "", ProviderType.FACEBOOK)
+                                    } else {
+                                        showLoginAlert()
+                                    }
+                                }
+
+                        }
+                    }
+
+
+                })
+            }
         }
     }
 
@@ -151,6 +194,7 @@ class AuthActivity : AppCompatActivity() {
 
     @Deprecated("Deprecated in Java")
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        callbackManager.onActivityResult(requestCode, resultCode, data)
         super.onActivityResult(requestCode, resultCode, data)
         if (requestCode == GOOGLE_SIGN_IN) {
             val task = GoogleSignIn.getSignedInAccountFromIntent(data)
