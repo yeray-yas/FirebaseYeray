@@ -1,9 +1,11 @@
 package com.yerayyas.firebaseyeray
 
 import android.app.AlertDialog
+import android.content.Context
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.view.View
 import android.widget.Toast
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.auth.FirebaseAuth
@@ -26,8 +28,27 @@ class AuthActivity : AppCompatActivity() {
 
         // Setup
         setup()
+        session()
 
 
+    }
+
+    private fun session() {
+        val prefs = getSharedPreferences(getString(R.string.prefs_file), Context.MODE_PRIVATE)
+        val email = prefs.getString("email", null)
+        val provider = prefs.getString("provider", null)
+
+        if (email != null && provider != null) {
+            // Quiere decir que ya tenemos iniciada una sesión en nuestra app
+            binding.authLayout.visibility = View.INVISIBLE
+            showHome(email, ProviderType.valueOf(provider))
+        }
+    }
+
+    override fun onStart() {
+        super.onStart()
+
+        binding.authLayout.visibility = View.VISIBLE
     }
 
     private fun setup() {
@@ -82,6 +103,9 @@ class AuthActivity : AppCompatActivity() {
                 } else {
                     Toast.makeText(this@AuthActivity, "Empty field/s", Toast.LENGTH_SHORT).show()
                 }
+            }
+            googleButton.setOnClickListener {
+
             }
         }
     }
