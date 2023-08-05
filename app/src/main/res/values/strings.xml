@@ -23,4 +23,7 @@
     <!-- [END fcm_default_icon_string] -->
     <string name="msg_subscribe_failed">Failed to subscribe to weather topic</string>
     <string name="fcm_message">FCM Message</string>
+    <string name="titulo">Titulo</string>
+    <string name="some_message">Some message</string>
+    <string name="nothing">nothing</string>
 </resources>

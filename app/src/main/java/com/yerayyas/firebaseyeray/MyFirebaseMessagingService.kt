@@ -7,12 +7,9 @@ import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
 import android.os.Build
-import android.os.Handler
-import android.os.Looper
+import android.util.Log
 import android.widget.RemoteViews
-import android.widget.Toast
 import androidx.core.app.NotificationCompat
-import androidx.core.content.ContextCompat
 import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
 
@@ -25,18 +22,26 @@ const val CHANNEL_NAME = "tutorial2"
 
 class MyFirebaseMessagingService : FirebaseMessagingService() {
 
+    override fun onNewToken(token: String) {
+        Log.d("TAG", "Refreshed token: $token")
+
+        // If you want to send messages to this application instance or
+        // manage this apps subscriptions on the server side, send the
+        // FCM registration token to your app server.
+        //sendRegistrationToServer(token)
+    }
+
     //Generar notificacion
     private fun generateNotification(title: String, message: String) {
         val intent = Intent(this, AuthActivity::class.java)
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
 
-        var pendingIntent: PendingIntent
         //var pendingIntent =   PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_ONE_SHOT)
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-            pendingIntent = PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_MUTABLE)
+        val pendingIntent: PendingIntent = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_MUTABLE)
         } else {
-            pendingIntent = PendingIntent.getActivity(
+            PendingIntent.getActivity(
                 this, 0, intent,
                 PendingIntent.FLAG_ONE_SHOT or PendingIntent.FLAG_IMMUTABLE
             )
@@ -82,7 +87,7 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
         val remoteView = RemoteViews("com.yerayyas.firebaseyeray", R.layout.notification)
         remoteView.setTextViewText(R.id.title, title)
         remoteView.setTextViewText(R.id.message, message)
-        remoteView.setImageViewResource(R.id.image, R.drawable.ic_notifaction)
+        remoteView.setImageViewResource(R.id.image, R.drawable.ic_notification)
 
         return remoteView
     }
