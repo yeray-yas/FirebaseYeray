@@ -57,6 +57,8 @@ dependencies {
     implementation("com.google.firebase:firebase-auth-ktx")
     implementation("com.facebook.android:facebook-login:latest.release")
     implementation("com.facebook.android:facebook-android-sdk:latest.release")
+    implementation("com.google.firebase:firebase-messaging:23.2.0")
+
 
 
 }
