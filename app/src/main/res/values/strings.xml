@@ -26,4 +26,5 @@
     <string name="titulo">Titulo</string>
     <string name="some_message">Some message</string>
     <string name="nothing">nothing</string>
+    <string name="force_error">Force error</string>
 </resources>

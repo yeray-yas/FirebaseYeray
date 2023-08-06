@@ -61,7 +61,6 @@ class AuthActivity : AppCompatActivity() {
         session()
         notification()
 
-
     }
 
     private fun notification() {

@@ -5,6 +5,7 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import com.facebook.login.LoginManager
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.crashlytics.FirebaseCrashlytics
 import com.yerayyas.firebaseyeray.ProviderType.FACEBOOK
 import com.yerayyas.firebaseyeray.databinding.ActivityHomeBinding
 
@@ -61,9 +62,20 @@ class HomeActivity : AppCompatActivity() {
                onBackPressed()
 
            }
+
+
+           errorButton.setOnClickListener {
+
+               FirebaseCrashlytics.getInstance().setUserId(email)
+               FirebaseCrashlytics.getInstance().setCustomKey("provider", provider)
+
+               // Sending context log
+               FirebaseCrashlytics.getInstance().log("The force crash button has been clicked")
+
+               // Forcing error handling
+               throw RuntimeException("Force error")
+           }
        }
-
-
-
     }
+
 }
