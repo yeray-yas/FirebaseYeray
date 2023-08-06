@@ -26,11 +26,17 @@ import com.google.firebase.auth.FacebookAuthProvider
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.GoogleAuthProvider
 import com.google.firebase.iid.*
+import com.google.firebase.ktx.Firebase
 import com.google.firebase.messaging.FirebaseMessaging
+import com.google.firebase.remoteconfig.ktx.remoteConfig
+import com.google.firebase.remoteconfig.ktx.remoteConfigSettings
 import com.yerayyas.firebaseyeray.databinding.ActivityAuthBinding
 
+const val MINIMUM_FETCH_INTERVAL = 60L
+const val GOOGLE_SIGN_IN = 100
+
 class AuthActivity : AppCompatActivity() {
-    private val GOOGLE_SIGN_IN = 100
+
     private lateinit var binding: ActivityAuthBinding
     private val callbackManager = CallbackManager.Factory.create()
 
@@ -55,6 +61,19 @@ class AuthActivity : AppCompatActivity() {
         val bundle = Bundle()
         bundle.putString("message", "Firebase integration complete")
         analytics.logEvent("InitScreen", bundle)
+
+        //Remote config
+        val configSettings = remoteConfigSettings {
+            minimumFetchIntervalInSeconds = MINIMUM_FETCH_INTERVAL
+        }
+        val firebaseConfig = Firebase.remoteConfig
+        firebaseConfig.setConfigSettingsAsync(configSettings)
+        firebaseConfig.setDefaultsAsync(
+            mapOf(
+                "show_error_button" to false,
+                "error_button_text" to "Force Error"
+            )
+        )
 
         // Setup
         setup()

@@ -3,9 +3,12 @@ package com.yerayyas.firebaseyeray
 import android.content.Context
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.view.View
 import com.facebook.login.LoginManager
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.crashlytics.FirebaseCrashlytics
+import com.google.firebase.ktx.Firebase
+import com.google.firebase.remoteconfig.ktx.remoteConfig
 import com.yerayyas.firebaseyeray.ProviderType.FACEBOOK
 import com.yerayyas.firebaseyeray.databinding.ActivityHomeBinding
 
@@ -36,46 +39,63 @@ class HomeActivity : AppCompatActivity() {
         prefs.putString("provider", provider)
         prefs.apply()
 
+        // Remote Config
+        binding.errorButton.visibility = View.INVISIBLE
+        Firebase.remoteConfig.fetchAndActivate().addOnCompleteListener { task ->
+            if (task.isSuccessful) {
+                val showErrorButton = Firebase.remoteConfig.getBoolean("show_error_button")
+                val errorButtonText = Firebase.remoteConfig.getString("error_button_text")
+
+                if(showErrorButton){
+                    binding.errorButton.visibility = View.VISIBLE
+                }
+
+                binding.errorButton.text = errorButtonText
+
+            }
+        }
+
 
     }
 
     private fun setup(email: String, provider: String) {
         title = "Home"
 
-       with(binding){
+        with(binding) {
             emailTextView.text = email
-           providerTextView.text = provider
+            providerTextView.text = provider
 
-           logOutButton.setOnClickListener {
+            logOutButton.setOnClickListener {
 
-               //Erase data
-               val prefs = getSharedPreferences(getString(R.string.prefs_file), Context.MODE_PRIVATE)
-                   .edit()
-               prefs.clear()
-               prefs.apply()
+                //Erase data
+                val prefs =
+                    getSharedPreferences(getString(R.string.prefs_file), Context.MODE_PRIVATE)
+                        .edit()
+                prefs.clear()
+                prefs.apply()
 
-               if (provider == FACEBOOK.name){
-                   LoginManager.getInstance().logOut()
-               }
+                if (provider == FACEBOOK.name) {
+                    LoginManager.getInstance().logOut()
+                }
 
-               FirebaseAuth.getInstance().signOut()
-               onBackPressed()
+                FirebaseAuth.getInstance().signOut()
+                onBackPressed()
 
-           }
+            }
 
 
-           errorButton.setOnClickListener {
+            errorButton.setOnClickListener {
 
-               FirebaseCrashlytics.getInstance().setUserId(email)
-               FirebaseCrashlytics.getInstance().setCustomKey("provider", provider)
+                FirebaseCrashlytics.getInstance().setUserId(email)
+                FirebaseCrashlytics.getInstance().setCustomKey("provider", provider)
 
-               // Sending context log
-               FirebaseCrashlytics.getInstance().log("The force crash button has been clicked")
+                // Sending context log
+                FirebaseCrashlytics.getInstance().log("The force crash button has been clicked")
 
-               // Forcing error handling
-               throw RuntimeException("Force error")
-           }
-       }
+                // Forcing error handling
+                throw RuntimeException("Force error")
+            }
+        }
     }
 
 }
