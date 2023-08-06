@@ -68,41 +68,22 @@ class AuthActivity : AppCompatActivity() {
 
         FirebaseMessaging.getInstance().token.addOnCompleteListener { task: Task<String> ->
             if (!task.isSuccessful) {
+                Log.w("TAG", "Fetching FCM registration token failed", task.exception)
                 return@addOnCompleteListener
             }
             val token = task.result
             Log.d("PUSH_TOKEN", "pushToken: $token")
         }
-        //FirebaseMessaging.getInstance().token.addOnCompleteListener/*(OnCompleteListener*/ { task ->
-//            if (!task.isSuccessful) {
-//                Log.w("TONTO", "Fetching FCM registration token failed", task.exception)
-//                return@OnCompleteListener
-//            } else {
-//                // Get new FCM registration token
-//                val token = task.result
-//                token.let {
-//                    println("Este es el token del dispositivo: $token")
-//                }
-//
-//            }
-//
-//            // Get new FCM registration token
-//            val token = task.result
-//
-//            // Log and toast
-////            val msg = getString(R.string.msg_token_fmt, token)
-////            Log.d(TAG, msg)
-////            Toast.makeText(baseContext, msg, Toast.LENGTH_SHORT).show()
-//        }//)
 
-//        // Temas (Topics)
-//        FirebaseMessaging.getInstance().subscribeToTopic("tutorial")
-//
-//        // Recuperar información
-//        val url = intent.getStringExtra("url")
-//        url?.let {
-//            println("Ha llegado información en una push: $it")
-       // }
+
+        // Temas (Topics)
+        FirebaseMessaging.getInstance().subscribeToTopic("tutorial")
+
+        // Recuperar información
+        val url = intent.getStringExtra("url")
+        url?.let {
+            println("Ha llegado información en una push: $it")
+        }
 
 
     }
