@@ -7,6 +7,7 @@ import android.view.View
 import com.facebook.login.LoginManager
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.crashlytics.FirebaseCrashlytics
+import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.remoteconfig.ktx.remoteConfig
 import com.yerayyas.firebaseyeray.ProviderType.FACEBOOK
@@ -20,6 +21,7 @@ enum class ProviderType {
 }
 
 class HomeActivity : AppCompatActivity() {
+    private val db = FirebaseFirestore.getInstance()
     private lateinit var binding: ActivityHomeBinding
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -46,7 +48,7 @@ class HomeActivity : AppCompatActivity() {
                 val showErrorButton = Firebase.remoteConfig.getBoolean("show_error_button")
                 val errorButtonText = Firebase.remoteConfig.getString("error_button_text")
 
-                if(showErrorButton){
+                if (showErrorButton) {
                     binding.errorButton.visibility = View.VISIBLE
                 }
 
@@ -94,6 +96,26 @@ class HomeActivity : AppCompatActivity() {
 
                 // Forcing error handling
                 throw RuntimeException("Force error")
+            }
+
+            saveButton.setOnClickListener {
+                db.collection("user").document(email).set(
+                    hashMapOf(
+                        "provider" to provider,
+                        "address" to addressTextView.text.toString(),
+                        "phone" to phoneTextView.text.toString()
+
+                    )
+                )
+            }
+            getButton.setOnClickListener {
+                db.collection("user").document(email).get().addOnSuccessListener {
+                    addressTextView.setText(it.get("address") as String?)
+                  phoneTextView.setText(it.get("phone") as String?)
+                }
+            }
+            eraseButton.setOnClickListener {
+                db.collection("user").document(email).delete()
             }
         }
     }

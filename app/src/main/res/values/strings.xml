@@ -27,4 +27,10 @@
     <string name="some_message">Some message</string>
     <string name="nothing">nothing</string>
     <string name="force_error">Force error</string>
+    <string name="calle_numero_piso">Calle, número, piso</string>
+    <string name="telefono">Teléfono</string>
+    <string name="save">Save</string>
+    <string name="load">Load</string>
+    <string name="erase">Erase</string>
+    <string name="get">Get</string>
 </resources>
